@@ -1,0 +1,26 @@
+#!/bin/bash
+
+if [ "$#" -lt 1 ]
+then
+  echo "Usage: createsite DOMAIN"
+  exit 1
+fi
+
+if [ "$1" == "." ] || [ "$1" == ".." ]; then
+    echo "Bad domain name"
+    exit 1
+fi
+
+read -r -p "Are you sure delete '$1'? [y/N] " response
+if [[ $response =~ ^([yY][eE][sS]|[yY])$ ]]
+then
+    NGINX_AVAILABLE_DIR="/etc/nginx/sites-available"
+    NGINX_ENABLE_DIR="/etc/nginx/sites-enabled"
+    PUBLIC_HTML_DIR="/mnt/hdds/hdd01/public_html"
+
+    [ -d "$PUBLIC_HTML_DIR/$1" ] && rm -rf $PUBLIC_HTML_DIR/$1
+    [ -f "$NGINX_AVAILABLE_DIR/$1" ] && rm -rf $NGINX_AVAILABLE_DIR/$1
+
+    site-off $1
+fi
+

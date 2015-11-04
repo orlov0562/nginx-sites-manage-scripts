@@ -1,0 +1,23 @@
+#!/bin/sh
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: addsite SITE_CONFIG_FILE"
+  exit 1
+fi
+
+NGINX_AVAILABLE_DIR="/etc/nginx/sites-available"
+NGINX_ENABLE_DIR="/etc/nginx/sites-enabled"
+
+if [ ! -f "$NGINX_AVAILABLE_DIR/$1" ]; then
+    echo "Config file '$1' not found"
+    exit 1
+fi
+
+if [ ! -f "$NGINX_ENABLE_DIR/$1" ]; then
+    ln -s "$NGINX_AVAILABLE_DIR/$1" "$NGINX_ENABLE_DIR/$1"
+fi
+
+nginx -s reload
+
+sshpass -p '{ТУТ-НУЖЕН-ПАРОЛЬ}' ssh root@{ТУТ-НУЖЕН-IP} -p{ТУТ-НУЖЕН-ПОРТ} "addsite $1" >/dev/null

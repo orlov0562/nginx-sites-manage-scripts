@@ -1,0 +1,18 @@
+#!/bin/sh
+
+if [ "$#" -ne 1 ]
+then
+  echo "Usage: rmsite SITE_CONFIG_FILE"
+  exit 1
+fi
+
+NGINX_ENABLE_DIR="/etc/nginx/sites-enabled"
+
+if [ ! -f "$NGINX_ENABLE_DIR/$1" ]; then
+    echo "Site config file '$1' not found or already deleted"
+    exit 1
+fi
+
+rm "$NGINX_ENABLE_DIR/$1" && nginx -s reload
+
+sshpass -p '{ТУТ НУЖЕН ПАРОЛЬ}' ssh root@{ТУТ НУЖЕН IP} -p{ТУТ НУЖЕН ПОРТ} "rmsite $1" > /dev/null

@@ -1,0 +1,27 @@
+#!/bin/sh
+
+if [ "$#" -lt 1 ]
+then
+  echo "Usage: createsite DOMAIN"
+  exit 1
+fi
+
+DIR="$(dirname "$(readlink -f "$0")")"
+TPL_FILE="$DIR/site.tpl"
+NGINX_AVAILABLE_DIR="/etc/nginx/sites-available"
+PUBLIC_HTML_DIR="/mnt/hdds/hdd01/public_html"
+
+[ ! -d "$PUBLIC_HTML_DIR/$1" ] && mkdir $PUBLIC_HTML_DIR/$1
+[ ! -d "$PUBLIC_HTML_DIR/$1/logs" ] && mkdir $PUBLIC_HTML_DIR/$1/logs
+[ ! -d "$PUBLIC_HTML_DIR/$1/www" ] && mkdir $PUBLIC_HTML_DIR/$1/www
+chown root:www $PUBLIC_HTML_DIR/$1/www
+chmod 0775 $PUBLIC_HTML_DIR/$1/www
+[ ! -f "$PUBLIC_HTML_DIR/$1/www/index.php" ] && echo "Web site $1 just created. Real content comming soon." > $PUBLIC_HTML_DIR/$1/www/index.php
+
+cp $TPL_FILE $NGINX_AVAILABLE_DIR/$1
+sed -i "s/@DOMAIN/$1/g" $NGINX_AVAILABLE_DIR/$1
+
+if [ "$#" -eq 2 ]
+then
+site-on $1
+fi
